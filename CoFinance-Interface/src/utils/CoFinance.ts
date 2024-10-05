@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, parseUnits } from 'ethers';
 import { getAllPools} from './Factory'
 
 const COFINANCE_ABI = [
@@ -71,54 +71,6 @@ const COFINANCE_ABI = [
 		"type": "error"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "duration",
-				"type": "uint256"
-			}
-		],
-		"name": "borrowTokens",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "claimFees",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "depositCollateral",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "FailedInnerCall",
 		"type": "error"
@@ -165,25 +117,6 @@ const COFINANCE_ABI = [
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "borrower",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "collateralAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "CollateralLiquidated",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
 				"name": "withdrawer",
 				"type": "address"
 			},
@@ -215,19 +148,6 @@ const COFINANCE_ABI = [
 		],
 		"name": "InterestFeeClaimed",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "borrower",
-				"type": "address"
-			}
-		],
-		"name": "liquidateLoan",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -264,25 +184,6 @@ const COFINANCE_ABI = [
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "recipient",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "LiquidityTokensSent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "borrower",
@@ -297,37 +198,6 @@ const COFINANCE_ABI = [
 		],
 		"name": "LoanRepaid",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenAAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenBAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "provideLiquidity",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "repayLoan",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -347,24 +217,6 @@ const COFINANCE_ABI = [
 		],
 		"name": "SwapFeeClaimed",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "swapTokens",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -429,58 +281,6 @@ const COFINANCE_ABI = [
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "newShare",
-				"type": "uint256"
-			}
-		],
-		"name": "updateOwnerShare",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "newFee",
-				"type": "uint256"
-			}
-		],
-		"name": "updateSwapFee",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdrawCollateral",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "liquidityTokenAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdrawLiquidity",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -504,6 +304,100 @@ const COFINANCE_ABI = [
 		],
 		"name": "WithdrawLiquidity",
 		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "INTEREST_RATE_30_DAYS",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "INTEREST_RATE_90_DAYS",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "SECONDS_IN_30_DAYS",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "SECONDS_IN_90_DAYS",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "balances",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "tokenToBorrow",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "duration",
+				"type": "uint256"
+			}
+		],
+		"name": "borrowTokens",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -541,6 +435,13 @@ const COFINANCE_ABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "claimFees",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -582,6 +483,37 @@ const COFINANCE_ABI = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "depositCollateral",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "estimatedTokenAmount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "factory",
 		"outputs": [
@@ -595,12 +527,23 @@ const COFINANCE_ABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "getBorrowedAmount",
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "getBorrowedInfo",
 		"outputs": [
 			{
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			},
+			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
@@ -627,62 +570,30 @@ const COFINANCE_ABI = [
 	},
 	{
 		"inputs": [],
-		"name": "getReserves",
+		"name": "getReservedLiquidity",
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "reserveA",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getTotalLiquidity",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "netReserveA",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "reserveB",
+				"name": "netReserveB",
 				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "INTEREST_RATE_30_DAYS",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "INTEREST_RATE_90_DAYS",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "isLiquidityProvider",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -696,25 +607,6 @@ const COFINANCE_ABI = [
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "liquidityProviders",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -814,12 +706,7 @@ const COFINANCE_ABI = [
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "outputAmount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "feeAmount",
+				"name": "estimatedAmount",
 				"type": "uint256"
 			}
 		],
@@ -840,6 +727,42 @@ const COFINANCE_ABI = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenAAmount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenBAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "provideLiquidity",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			}
+		],
+		"name": "repayLoan",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "rewardToken",
 		"outputs": [
@@ -847,32 +770,6 @@ const COFINANCE_ABI = [
 				"internalType": "contract IERC20",
 				"name": "",
 				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "SECONDS_IN_30_DAYS",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "SECONDS_IN_90_DAYS",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -905,6 +802,24 @@ const COFINANCE_ABI = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "swapTokens",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "tokenA",
 		"outputs": [
@@ -925,32 +840,6 @@ const COFINANCE_ABI = [
 				"internalType": "contract IERC20",
 				"name": "",
 				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalCollateralA",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalCollateralB",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -998,20 +887,27 @@ const COFINANCE_ABI = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "userAccumulatedFeesA",
-		"outputs": [
-			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "newShare",
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "view",
+		"name": "updateOwnerShare",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newFee",
+				"type": "uint256"
+			}
+		],
+		"name": "updateSwapFee",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -1022,7 +918,7 @@ const COFINANCE_ABI = [
 				"type": "address"
 			}
 		],
-		"name": "userAccumulatedFeesB",
+		"name": "userAccumulatedSwapFees",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1070,12 +966,57 @@ const COFINANCE_ABI = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "userSwapFees",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdrawCollateral",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "liquidityTokenAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdrawLiquidity",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ];
 export const getTotalLiquidity = async (provider: ethers.BrowserProvider, poolAddress: string): Promise<{ totalA: string, totalB: string }> => {
     try {
         const contract = new ethers.Contract(poolAddress, COFINANCE_ABI, provider);
-        const [totalA, totalB]: [ethers.BigNumber, ethers.BigNumber] = await contract.getReserves();
+        const [totalA, totalB]: [ethers.BigNumber, ethers.BigNumber] = await contract.getTotalLiquidity();
         return {
             totalA: ethers.formatUnits(totalA),
             totalB: ethers.formatUnits(totalB)
@@ -1174,10 +1115,10 @@ export const getTotalLiquidity = async (provider: ethers.BrowserProvider, poolAd
     try {
         const signer = await provider.getSigner();
         const contractWithSigner = new ethers.Contract(poolAddress, COFINANCE_ABI, signer);
-        const formattedAmount = ethers.parseUnits(amount, 18);
+        
         const tx = await contractWithSigner.borrowTokens(
-            formattedAmount,
             tokenAddress,
+            amount,
             duration
         );
         await tx.wait();
@@ -1217,9 +1158,10 @@ export const getTotalLiquidity = async (provider: ethers.BrowserProvider, poolAd
 	try {
 	  const signer = await provider.getSigner();
 	  const contractWithSigner = new ethers.Contract(poolAddress, COFINANCE_ABI, signer);
-	  const parsedLiquidityTokenAmount = ethers.parseUnits(liquidityTokenAmount, 18); 
-	  const tx = await contractWithSigner.withdrawLiquidity(parsedLiquidityTokenAmount);
-	  await tx.wait();
+	  const parsedLiquidityTokenAmount = ethers.parseUnits(liquidityTokenAmount, 18);
+  	  const tx = await contractWithSigner.withdrawLiquidity(parsedLiquidityTokenAmount);
+	  await tx.wait(); 
+  
 	  console.log('Liquidity withdrawn:', liquidityTokenAmount);
 	} catch (error) {
 	  console.error('Error withdrawing liquidity:', error);
@@ -1344,3 +1286,21 @@ export const getTotalLiquidity = async (provider: ethers.BrowserProvider, poolAd
         throw error;
     }
   };
+
+  export const getBorrowedInfo = async (provider: ethers.BrowserProvider, address: string): Promise<{ tokenAddress: string, amount: string }> => {
+    try {
+        const pools = await getAllPools(provider);
+        for (const poolAddress of pools) {
+            const contract = new ethers.Contract(poolAddress, COFINANCE_ABI, provider);
+            const { tokenAddress, amount } = await contract.getBorrowedInfo(address);
+            if (tokenAddress) {
+				console.log(tokenAddress);
+                return { tokenAddress, amount: ethers.formatUnits(amount, 18) };
+            }
+        }
+        return { tokenAddress: '', amount: '0' }; 
+    } catch (error) {
+        console.error('Error fetching borrowed info:', error);
+        throw error;
+    }
+};
