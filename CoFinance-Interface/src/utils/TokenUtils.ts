@@ -286,7 +286,7 @@ interface TokenInfo {
   image: string;
 }
 
-export const getTokenInfo = async (provider: ethers.ethers.BrowserProvider, address: string): Promise<TokenInfo> => {
+export const getTokenInfo = async (provider: ethers.BrowserProvider, address: string): Promise<TokenInfo> => {
   try {
     const tokenContract = new ethers.Contract(address, [
       "function name() view returns (string)",
