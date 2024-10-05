@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import '@sweetalert2/theme-dark/dark.css';
 import { Button } from '../../components/ui/moving-border';
-import { getIncentivizedPools } from '@/utils/Factory';
+import { getAllPools } from '@/utils/Factory';
 import { getLiquidityToken, getStakingContract } from '@/utils/CoFinance';
 import { stakeTokens } from '@/utils/Staking';
 import { getTokenInfo, getTokenBalance, approveToken } from '@/utils/TokenUtils';
@@ -86,7 +86,7 @@ function Staking() {
     const fetchIncentivizedPools = async () => {
       if (!providerRef.current) return;
       try {
-        const pools = await getIncentivizedPools(providerRef.current);
+        const pools = await getAllPools(providerRef.current);
         const poolAddresses = Array.from(pools);
 
         const options = await Promise.all(
