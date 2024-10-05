@@ -2,55 +2,6 @@ import { ethers } from 'ethers';
 
 const COFINANCE_FACTORY_ABI = [
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenA",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "tokenB",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "rewardToken",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "priceFeed",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "liquidityTokenName",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "liquidityTokenSymbol",
-				"type": "string"
-			},
-			{
-				"internalType": "bool",
-				"name": "isPoolIncentivized",
-				"type": "bool"
-			}
-		],
-		"name": "createPool",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
@@ -165,32 +116,6 @@ const COFINANCE_FACTORY_ABI = [
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "newFee",
-				"type": "uint256"
-			}
-		],
-		"name": "updateCreationFee",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
-			}
-		],
-		"name": "withdrawFees",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -204,6 +129,55 @@ const COFINANCE_FACTORY_ABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "tokenA",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "tokenB",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "rewardToken",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "priceFeed",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "liquidityTokenName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "liquidityTokenSymbol",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "isPoolIncentivized",
+				"type": "bool"
+			}
+		],
+		"name": "createPool",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -222,19 +196,6 @@ const COFINANCE_FACTORY_ABI = [
 	{
 		"inputs": [],
 		"name": "getAllPools",
-		"outputs": [
-			{
-				"internalType": "address[]",
-				"name": "",
-				"type": "address[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getIncentivizedPools",
 		"outputs": [
 			{
 				"internalType": "address[]",
@@ -308,25 +269,6 @@ const COFINANCE_FACTORY_ABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "incentivizedPoolsList",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "owner",
 		"outputs": [
@@ -364,6 +306,30 @@ const COFINANCE_FACTORY_ABI = [
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "poolsByToken",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "thisAddress",
 		"outputs": [
@@ -375,11 +341,37 @@ const COFINANCE_FACTORY_ABI = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "newFee",
+				"type": "uint256"
+			}
+		],
+		"name": "updateCreationFee",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			}
+		],
+		"name": "withdrawFees",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ];
 
 //  const COFINANCE_FACTORY_ADDRESS = '0xee2bf3Aa042C3915190EB9bf50B9EF5ae89565A9'; 
- const COFINANCE_FACTORY_ADDRESS = '0xbbfCDbB762BD83c71A048fFb3629C732493d140a'; 
+ const COFINANCE_FACTORY_ADDRESS = '0x5B745BEf85b8db25B3C26b63A9A9e54185E125a9'; 
 // scroll const COFINANCE_FACTORY_ADDRESS = '0x2A322216AC69Ecb5341D02E826f4708089B83d9b'; 
 
 export const createPool = async (
