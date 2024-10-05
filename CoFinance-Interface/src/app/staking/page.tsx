@@ -101,7 +101,7 @@ function Staking() {
               tokenInfo = await getTokenInfo(providerRef.current, liquidityToken);
               balance = await getTokenBalance(providerRef.current, liquidityToken, account);
             } catch (error) {
-              tokenInfo = { value: liquidityToken, label: 'Unsupported Token', image: '/tokens/CoFi.png' };
+              tokenInfo = { value: liquidityToken, label: 'Unsupported Token', image: '/tokens/Missing-Token.png' };
             }
 
             return {

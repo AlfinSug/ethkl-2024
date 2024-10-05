@@ -5,7 +5,7 @@ import AddLiquidityModal from './inner-page/AddLiquidityModal';
 import WithdrawLiquidityModal from './inner-page/WithdrawLiquidityModal';
 import { MdOutlineVerticalDistribute } from 'react-icons/md';
 
-const DEFAULT_IMAGE_URL = '/tokens/CoFi.png';
+const DEFAULT_IMAGE_URL = '/tokens/Missing-Token.png';
 
 interface PoolCardProps {
   pool: {
@@ -83,16 +83,16 @@ const PoolCard: React.FC<PoolCardProps> = ({ pool }) => {
           <MdOutlineVerticalDistribute />
         </button>
         {menuOpen && (
-          <div className="absolute top-full w-64 text-nowrap right-0 mt-2 text-white p-2 rounded-lg shadow-lg z-10 bg-gray-800">
+          <div className="absolute top-full w-64 text-nowrap right-0 mt-2 text-white p-2 rounded-lg shadow-lg z-10 bg-transparent shadow-md shadow-teal-700">
             <button
               onClick={handleAddPool}
-              className="block w-full text-left p-2 rounded-md hover:bg-gray-700"
+              className="block w-full text-left p-2 rounded-md hover:bg-teal-700"
             >
               Add Liquidity
             </button>
             <button
               onClick={handleWithdrawPool}
-              className="block w-full text-left p-2 rounded-md hover:bg-gray-700"
+              className="block w-full text-left p-2 rounded-md hover:bg-teal-700"
             >
               Withdraw
             </button>

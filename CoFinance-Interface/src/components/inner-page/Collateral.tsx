@@ -124,10 +124,13 @@ const Collateral: React.FC<CollateralProps> = ({ tokenOptions = [], borrowedToke
                 },
                 confirmButtonText: 'Close',
             });
+
+            setLoading(false);
             return;
         }
 
         try {
+            setLoading(true);
             await approveToken(provider, selectedDepositToken.value, poolAddress, collateralAmount.toString());
             await depositCollateral(provider, poolAddress, selectedDepositToken.value, collateralAmount.toString());
 
@@ -162,6 +165,8 @@ const Collateral: React.FC<CollateralProps> = ({ tokenOptions = [], borrowedToke
                 },
                 confirmButtonText: 'Close',
             });
+
+            setLoading(false);
         }
     };
 
@@ -175,9 +180,9 @@ const Collateral: React.FC<CollateralProps> = ({ tokenOptions = [], borrowedToke
     };
 
 
-    if (loading) {
-        return <div className="loading">Loading...</div>;
-    }
+    // if (loading) {
+    //     return <div className="loading">Loading...</div>;
+    // }
 
     return (
         <div className='space-y-4 py-4 h-96 overflow-y-hidden'>
@@ -189,7 +194,7 @@ const Collateral: React.FC<CollateralProps> = ({ tokenOptions = [], borrowedToke
                 </div>
                 <button className="btn btn-sm"><CiWallet /><strong>{userBalance}</strong></button>
             </div>
-            
+
             <div className="flex items-center justify-between w-full space-x-2 bg-transparent rounded-2xl rounded-tr-2xl px-4 py-2">
                 <CustomSelectSearch
                     tokenOptions={defaultTokenOptions}
@@ -223,10 +228,16 @@ const Collateral: React.FC<CollateralProps> = ({ tokenOptions = [], borrowedToke
 
             <div className="w-full text-end rounded-lg p-1 bg-[#bdc3c7]">
                 <button
-                    className="btn border-0 font-thin text-lg bg-transparent hover:bg-transparent text-gray-950 w-full"
+                    className={`btn border-0 font-thin text-lg bg-transparent hover:bg-transparent text-gray-950 w-full ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                     onClick={onDepositCollateral}
                 >
-                    Deposit <MdOutlineArrowOutward />
+                    {loading ? (
+                        <div className="flex items-center justify-center w-full">
+                            <span className="loading loading-bars loading-sm"></span>
+                        </div>
+                    ) : (
+                        <>Deposit <MdOutlineArrowOutward /></>
+                    )}
                 </button>
             </div>
 

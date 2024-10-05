@@ -306,7 +306,7 @@ export const getTokenInfo = async (provider: ethers.ethers.BrowserProvider, addr
     return {
       value: address,
       label: `${tokenName} (${tokenSymbol})`,
-      image: tokenSymbol !== 'N/A' ? tokenImage : '/tokens/CoFi.png'
+      image: tokenSymbol !== 'N/A' ? tokenImage : '/tokens/Missing-Token.png'
     };
   } catch (error) {
     console.error('Error fetching token info:', error);
@@ -314,7 +314,7 @@ export const getTokenInfo = async (provider: ethers.ethers.BrowserProvider, addr
     return {
       value: address,
       label: 'N/A',
-      image: '/tokens/CoFi.png' 
+      image: '/tokens/Missing-Token.png' 
     };
   }
 };

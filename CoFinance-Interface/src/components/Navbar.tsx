@@ -15,7 +15,6 @@ const Navbar = () => {
             </div>
             <div className="navbar-center space-x-10 bg-transparent font-normal">
                 <ul className="menu menu-horizontal px-1 space-x-8 font-semibold text-md">
-                    <li><Link href={'/portofolio'}>Portfolio</Link></li>
                     <li><Link href={'/borrow'}>Borrow</Link></li>
                     <li><Link href={'/swap'}>Trade</Link></li>
                     <li>

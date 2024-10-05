@@ -31,9 +31,10 @@ const Swap: React.FC = () => {
   const [fromAmount, setFromAmount] = useState<number>(0);
   const [toAmount, setToAmount] = useState<number>(0);
   const [feeAmount, setFeeAmount] = useState<number>(0);
-  const [isSwap, setIsSwap] = useState<boolean>(false);
   const [poolAddress, setPoolAddress] = useState<string | null>(null);
   const [tokenBalance, setTokenBalance] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     const initProvider = async () => {
@@ -106,6 +107,8 @@ const Swap: React.FC = () => {
           cancelButton: 'my-custom-cancel-button',
         },
       });
+      setLoading(false);
+
       return;
     }
 
@@ -118,17 +121,21 @@ const Swap: React.FC = () => {
           cancelButton: 'my-custom-cancel-button',
         },
       });
+      setLoading(false);
+
       return;
     }
 
     try {
       if (fromToken.value === '0x28cc5edd54b1e4565317c3e0cfab551926a4cd2a') {
+        setLoading(true);
         await WrapNative(provider as ethers.BrowserProvider, fromAmount.toString());
       } else {
+        setLoading(true);
         await approveToken(provider as ethers.BrowserProvider, fromToken.value, poolAddress, fromAmount.toString());
       }
-
-      setIsSwap(true);
+      setLoading(true);
+      // setIsSwap(true);
       await swapTokens(provider as ethers.BrowserProvider, poolAddress, fromToken.value, fromAmount.toString());
       MySwal.fire({
         icon: 'success', title: 'Swap Successfully!', customClass: {
@@ -146,9 +153,11 @@ const Swap: React.FC = () => {
           cancelButton: 'my-custom-cancel-button',
         },
       });
+      setLoading(false);
     } finally {
-      setIsSwap(false);
+      setLoading(false);
     }
+    console.log("Now Loading : " + loading);
   };
 
   const onSwap = () => {
@@ -215,11 +224,10 @@ const Swap: React.FC = () => {
           </div>
           <div className="w-full text-end rounded-lg p-1 bg-[#bdc3c7]">
             <button
-              className="btn border-0 font-thin text-lg bg-transparent hover:bg-transparent text-gray-950 w-full"
+              className={`btn border-0 font-thin text-lg bg-transparent hover:bg-transparent text-gray-950 w-full ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               onClick={onConfirmSwap}
-              disabled={isSwap}
             >
-              {isSwap ? (
+              {loading ? (
                 <div className="flex items-center justify-center w-full">
                   <span className="loading loading-bars loading-sm"></span>
                 </div>

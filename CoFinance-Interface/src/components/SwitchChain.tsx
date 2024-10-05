@@ -7,7 +7,7 @@ import { IoIosGitNetwork } from "react-icons/io";
 // Define the chain options, including Solana clusters
 const chains = [
   { value: '0x34816e', label: 'Manta Network', soon: false, icon: 'https://seeklogo.com/images/M/manta-network-manta-logo-D595CAF1F9-seeklogo.com.png' },
-  { value: '0x8274f', label: 'Scroll', soon: false, icon: 'https://global.discourse-cdn.com/standard11/uploads/scroll2/original/2X/3/3bc70fd653f9c50abbb41b7568e549535f768fcc.png' },
+  // { value: '0x8274f', label: 'Scroll', soon: false, icon: 'https://pbs.twimg.com/profile_images/1696531511519150080/Fq5O0LeN_400x400.jpg' },
 ];
 
 const ChainSwitchButton: React.FC = () => {

@@ -32,7 +32,6 @@ const BorrowTokens: React.FC<CollateralProps> = ({
     const [selectedDuration, setSelectedDuration] = useState<SelectList | null>(null);
     const [selectedPool, setSelectedPool] = useState<string | null>(null);
     const [account, setAccount] = useState<string | null>(null);
-    const [isBorrowing, setIsBorrowing] = useState<boolean>(false);
     const [borrowAmount, setBorrowAmount] = useState<number>(0);
     const [userCollateralBalances, setUserCollateralBalances] = useState<{ [key: string]: string } | null>(null);
     const [userBorrowTokenBalance, setUserBorrowTokenBalance] = useState<string>('0');
@@ -64,6 +63,7 @@ const BorrowTokens: React.FC<CollateralProps> = ({
                 const accountAddress = await signer.getAddress();
                 setAccount(accountAddress);
             } catch (error) {
+                setLoading(false);
                 console.error('Error loading account:', error);
             } finally {
                 setLoading(false);
@@ -86,7 +86,7 @@ const BorrowTokens: React.FC<CollateralProps> = ({
                 setCollateralTokenAddress(selectedCollateralToken.value);
                 console.log("Collateral Selected : " + collateralTokenAddress);
                 const balances = await getCollateral(providerRef.current, account, poolAddress);
-                console.log(balances);
+                console.log("Borrow Balance : " + JSON.stringify(balances));
                 const collateralA = balances.collateralA || '0';
                 const collateralB = balances.collateralB || '0';
                 console.log('Collateral A:', collateralA);
@@ -110,6 +110,7 @@ const BorrowTokens: React.FC<CollateralProps> = ({
     const fetchBorrowTokenBalance = async (account: string) => {
         if (!providerRef.current || !selectedBorrowToken) return;
         const balance = await getTokenBalance(providerRef.current, selectedBorrowToken.value, account);
+        console.log("Borrow Now : " + balance);
         setUserBorrowTokenBalance(balance);
     };
 
@@ -139,10 +140,11 @@ const BorrowTokens: React.FC<CollateralProps> = ({
                 },
                 confirmButtonText: 'Close',
             });
+            setLoading(false);
             return;
         }
 
-        setIsBorrowing(true);
+        setLoading(true);
         try {
             console.log("Borrowing tokens with the following parameters:");
             console.log("Pool Address:", selectedPool);
@@ -188,22 +190,23 @@ const BorrowTokens: React.FC<CollateralProps> = ({
                 },
                 confirmButtonText: 'Close',
             });
+            setLoading(false);
         } finally {
-            setIsBorrowing(false);
+            setLoading(false);
         }
     };
 
     return (
         <div className='space-y-4 py-4 h-96'>
             {selectedPool && userCollateralBalances && selectedCollateralToken && (
-            <div role="alert" className="alert shadow-lg">
-                <FaMoneyCheck />
-                <div>
-                    <h3 className="font-bold">Available Colateral</h3>
-                    <div className="text-xs">{selectedCollateralToken?.label}</div>
+                <div role="alert" className="alert shadow-lg">
+                    <FaMoneyCheck />
+                    <div>
+                        <h3 className="font-bold">Available Colateral</h3>
+                        <div className="text-xs">{selectedCollateralToken?.label}</div>
+                    </div>
+                    <button className="btn btn-sm">{selectedCollateralToken ? userCollateralBalances?.[selectedCollateralToken.label] || 0 : 0}</button>
                 </div>
-                <button className="btn btn-sm">{selectedCollateralToken ? userCollateralBalances?.[selectedCollateralToken.label] || 0 : 0}</button>
-            </div>
             )}
             <div className="flex items-center justify-between w-full space-x-2 bg-transparent rounded-2xl rounded-tr-2xl px-4 py-2">
                 <CustomSelectSearch
@@ -244,11 +247,16 @@ const BorrowTokens: React.FC<CollateralProps> = ({
             </div>
             <div className="w-full text-end rounded-lg p-1 bg-[#bdc3c7]">
                 <button
-                    className="btn border-0 font-thin text-lg bg-transparent hover:bg-transparent text-gray-950 w-full"
+                    className={`btn border-0 font-thin text-lg bg-transparent hover:bg-transparent text-gray-950 w-full ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                     onClick={onBorrowTokens}
-                    disabled={isBorrowing}
                 >
-                    {isBorrowing ? 'Borrowing...' : 'Borrow'} <MdOutlineArrowOutward />
+                    {loading ? (
+                        <div className="flex items-center justify-center w-full">
+                            <span className="loading loading-bars loading-sm"></span>
+                        </div>
+                    ) : (
+                        <>Borrow <MdOutlineArrowOutward /></>
+                    )}
                 </button>
             </div>
         </div>

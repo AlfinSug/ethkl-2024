@@ -3,13 +3,13 @@ import { HoverEffect } from "./ui/card-hover-effect";
 
 // Sample token data; replace with actual token data source
 const featuredTokens = [
-    {
-        image: 'https://global.discourse-cdn.com/standard11/uploads/scroll2/original/2X/3/3bc70fd653f9c50abbb41b7568e549535f768fcc.png',
-        name: 'Scroll',
-        description: 'Scroll is compatible with Ethereum at the bytecode-level, meaning everything works right out of the box.',
-        slug: 'scroll',
-        isFeatured: true,
-    },
+    // {
+    //     image: 'https://global.discourse-cdn.com/standard11/uploads/scroll2/original/2X/3/3bc70fd653f9c50abbb41b7568e549535f768fcc.png',
+    //     name: 'Scroll',
+    //     description: 'Scroll is compatible with Ethereum at the bytecode-level, meaning everything works right out of the box.',
+    //     slug: 'scroll',
+    //     isFeatured: true,
+    // },
     {
         image: 'https://seeklogo.com/images/M/manta-network-manta-logo-D595CAF1F9-seeklogo.com.png',
         name: 'Manta Network',

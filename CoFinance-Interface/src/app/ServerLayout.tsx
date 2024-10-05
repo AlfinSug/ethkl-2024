@@ -12,14 +12,17 @@ export const metadata: Metadata = {
 };
 
 const ServerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Merge class names conditionally
+  const bodyClassName = `${inter.className} ${
+    process.env.HIDE_NEXT_ERROR_OVERLAY === "true" ? "hide-nextjs-portal" : ""
+  }`;
+
   return (
     <html lang="en" className="dark">
-      <body className={inter.className}>
+      <body className={bodyClassName}>
         <div className="relative w-full flex flex-col min-h-screen">
           <Navbar />
-          <main className="flex-grow">
-            {children}
-          </main>
+          <main className="flex-grow">{children}</main>
         </div>
       </body>
     </html>

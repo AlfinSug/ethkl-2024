@@ -55,7 +55,7 @@ function Pools() {
     loadPools();
   }, []);
 
-  const fetchPoolData = async (provider, address) => {
+  const fetchPoolData = async (provider: ethers.BrowserProvider, address: string) => {
     try {
       const { tokenA, tokenB } = await getTokenAddresses(provider, address);
       const [tokenAInfo, tokenBInfo, liquidityToken] = await Promise.all([
@@ -68,6 +68,8 @@ function Pools() {
       const scaledTotalB = parseFloat(liquidity.totalB);
       if (tokenAInfo.label === 'WXFI') tokenAInfo.label = 'XFI';
       if (tokenBInfo.label === 'WXFI') tokenBInfo.label = 'XFI';
+
+      console.log("address pool " + address);
 
       return {
         address,
@@ -85,12 +87,12 @@ function Pools() {
         liquidityToken,
       };
     } catch (error) {
-      console.error(`Error fetching liquidity for pool ${address}:`, error);
+      // console.error(`Error fetching liquidity for pool ${address}:`, error);
       return {
         address,
-        liquidity: { totalA: 'N/A', totalB: 'N/A' },
-        tokenA: { value: 'N/A', label: 'N/A', image: '/tokens/CoFi.png' },
-        tokenB: { value: 'N/A', label: 'N/A', image: '/tokens/CoFi.png' },
+        liquidity: { totalA: '0.0', totalB: '0.0' },
+        tokenA: { value: 'N/A', label: 'N/A', image: '/tokens/Missing-Token.png' },
+        tokenB: { value: 'N/A', label: 'N/A', image: '/tokens/Missing-Token.png' },
       };
     }
   };
@@ -112,7 +114,7 @@ function Pools() {
 
 
   const DiscoverPools = ({ pools }) => (
-    <div className="bg-[#141414] p-6 rounded-lg min-w-full min-h-screen h-screen">
+    <div className="bg-[#141414] p-6 rounded-lg min-w-full h-96">
       {pools.length === 0 ? (
         <p className="text-white text-center">No pools available</p>
       ) : (
@@ -147,7 +149,7 @@ function Pools() {
   );
 
   const IncentivizedPools = ({ userOwnedPools }) => (
-    <div className="bg-[#141414] p-6 rounded-lg min-w-full min-h-screen h-screen">
+    <div className="bg-[#141414] p-6 rounded-lg min-w-full h-96">
       {pools.length === 0 ? (
         <p className="text-white text-center">No pools available</p>
       ) : (
@@ -224,7 +226,7 @@ function Pools() {
           label: selectedPool?.liquidityToken?.label || '',
           balance: selectedPool?.liquidityToken?.balance || '0',
           address: selectedPool?.liquidityToken?.address || '',
-          image: selectedPool?.liquidityToken?.image || '/tokens/CoFi.png',
+          image: selectedPool?.liquidityToken?.image || '/tokens/Missing-Token.png',
         }}
       />
 
