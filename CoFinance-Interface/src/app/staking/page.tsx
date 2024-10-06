@@ -251,7 +251,7 @@ function Staking() {
               max={balance}
               value={amountPool}
               onChange={(e) => setAmountPool(e.target.value)}
-              className="custom-slider"
+              className="custom-slider w-full"
             />
           </div>
           <div className="mb-4">

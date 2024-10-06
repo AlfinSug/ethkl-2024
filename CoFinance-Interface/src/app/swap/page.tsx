@@ -195,7 +195,7 @@ const Swap: React.FC = () => {
                 className="text-right w-full rounded-xl px-5 py-2 text-2xl bg-transparent focus:border-0 text-white placeholder:text-gray-600"
               />
               <input type="range" min={0} max={tokenBalance} value={fromAmount || 0}
-                onChange={handleAmountChange} className="custom-slider" />
+                onChange={handleAmountChange} className="custom-slider w-full" />
             </div>
           </div>
 
