@@ -6,7 +6,7 @@ import BorrowTokens from '@/components/inner-page/BorrowTokens';
 import tokens from '@/data/token.json';
 import { durations } from '@/utils/durations';
 import { ethers } from 'ethers';
-import { getUserCollateralBalances } from '@/utils/CoFinance';
+import { getUserCollateralBalances, getBorrowedInfo } from '@/utils/CoFinance';
 import { useAccount } from '../RootLayout';
 import { FaWallet } from 'react-icons/fa';
 import { connectMetaMask } from '@/utils/wallet';
@@ -74,8 +74,9 @@ const Borrow: React.FC = () => {
     if (!providerRef.current || !account) return;
 
     try {
-      const balances = await getUserCollateralBalances(providerRef.current, account);
-      const totalBorrow = Object.values(balances).reduce((acc, balance) => acc + parseFloat(balance.collateralA) + parseFloat(balance.collateralB), 0);
+      const balances = await getBorrowedInfo(providerRef.current, account);
+      console.log(balances);
+      const totalBorrow = balances.amount;
       setBorrowBalance(totalBorrow);
     } catch (error) {
       console.error('Error fetching borrow balances:', error);

@@ -1,24 +1,43 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import PoolCard from '../../components/PoolCard';
-import { getAllPools, getIncentivizedPools } from '../../utils/Factory';
+import { getAllPools } from '../../utils/Factory';
 import { getTotalLiquidity, getTokenAddresses, getLiquidityToken } from '../../utils/CoFinance';
 import { getTokenInfo } from '../../utils/TokenUtils';
 import { ethers } from 'ethers';
 import WithdrawLiquidityModal from '@/components/inner-page/WithdrawLiquidityModal';
 import AddLiquidityModal from '@/components/inner-page/AddLiquidityModal';
 import Drawer from '@/components/Drawer';
-import { FaArrowsAltH, FaSwimmingPool } from 'react-icons/fa';
+import { FaSwimmingPool } from 'react-icons/fa';
+
+interface TokenInfo {
+  value: string;
+  label: string;
+  image: string;
+  address?: string;
+}
+
+interface Liquidity {
+  totalA: number;
+  totalB: number;
+}
+
+interface Pool {
+  address: string;
+  liquidity: Liquidity;
+  tokenA: TokenInfo;
+  tokenB: TokenInfo;
+  liquidityToken: any; // Adjust this type based on your actual liquidity token structure
+}
 
 function Pools() {
-  const [pools, setPools] = useState([]);
-  const [userOwnedPools, setUserOwnedPools] = useState([]);
+  const [pools, setPools] = useState<Pool[]>([]);
+  const [userOwnedPools, setUserOwnedPools] = useState<Pool[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedPool, setSelectedPool] = useState(null);
+  const [selectedPool, setSelectedPool] = useState<Pool | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [liquidityTokenAddress, setLiquidityTokenAddress] = useState(null);
   const [addLiquidityModalOpen, setAddLiquidityModalOpen] = useState(false);
-  const [account, setAccount] = useState(null);
+  const [account, setAccount] = useState<string | null>(null);
 
   useEffect(() => {
     const loadPools = async () => {
@@ -30,18 +49,29 @@ function Pools() {
         const signer = await provider.getSigner();
         const accountAddress = await signer.getAddress();
         setAccount(accountAddress);
-        console.log("Connected Account : ", accountAddress);
+        console.log("Connected Account: ", accountAddress);
 
         const poolAddresses = await getAllPools(provider);
-        const incentivizedPoolAddresses = await getIncentivizedPools(provider);
+        const incentivizedPoolAddresses = await getAllPools(provider);
 
+        console.log("Fetching All Pools...");
         const allPools = await Promise.all(
-          poolAddresses.map(async (address: any) => await fetchPoolData(provider, address))
+          poolAddresses.map(async (address, index) => {
+            console.log(`Fetching Pool Data for Address ${index + 1}/${poolAddresses.length}: ${address}`);
+            return await fetchPoolData(provider, address);
+          })
         );
 
+        console.log("Fetching User Owned Pools...");
         const userOwned = await Promise.all(
-          incentivizedPoolAddresses.map(async (address: any) => await fetchPoolData(provider, address))
+          incentivizedPoolAddresses.map(async (address, index) => {
+            console.log(`Fetching User Owned Pool Data for Address ${index + 1}/${incentivizedPoolAddresses.length}: ${address}`);
+            return await fetchPoolData(provider, address);
+          })
         );
+
+        console.log("All Pools Data:", allPools);
+        console.log("User Owned Pools Data:", userOwned);
 
         setPools(allPools);
         setUserOwnedPools(userOwned);
@@ -55,49 +85,63 @@ function Pools() {
     loadPools();
   }, []);
 
-  const fetchPoolData = async (provider: ethers.BrowserProvider, address: string) => {
+  const fetchPoolData = async (provider: ethers.BrowserProvider, address: string): Promise<Pool> => {
+    console.log(`Start fetching data for pool at address: ${address}`);
     try {
       const { tokenA, tokenB } = await getTokenAddresses(provider, address);
+      console.log(`Token addresses for pool ${address}: A = ${tokenA}, B = ${tokenB}`);
+
       const [tokenAInfo, tokenBInfo, liquidityToken] = await Promise.all([
         getTokenInfo(provider, tokenA),
         getTokenInfo(provider, tokenB),
         getLiquidityToken(provider, address),
       ]);
+
       const liquidity = await getTotalLiquidity(provider, address);
       const scaledTotalA = parseFloat(liquidity.totalA);
       const scaledTotalB = parseFloat(liquidity.totalB);
-      if (tokenAInfo.label === 'WXFI') tokenAInfo.label = 'XFI';
-      if (tokenBInfo.label === 'WXFI') tokenBInfo.label = 'XFI';
+      
+      const defaultTokenInfo: TokenInfo = { value: '0', label: 'Unknown', image: '/tokens/Missing-Token.png' };
 
-      console.log("address pool " + address);
+      const tokenAData = tokenAInfo && tokenAInfo.label ? tokenAInfo : defaultTokenInfo;
+      const tokenBData = tokenBInfo && tokenBInfo.label ? tokenBInfo : defaultTokenInfo;
+
+      console.log(`Fetched Pool Data for Address: ${address}`);
+      console.log(`Token A: ${tokenAData.label} (${tokenAData.address}) - Value: ${tokenAData.value}`);
+      console.log(`Token B: ${tokenBData.label} (${tokenBData.address}) - Value: ${tokenBData.value}`);
+      console.log(`Liquidity: Total A: ${scaledTotalA}, Total B: ${scaledTotalB}`);
 
       return {
         address,
         liquidity: { totalA: scaledTotalA, totalB: scaledTotalB },
         tokenA: {
-          value: tokenAInfo.value,
-          label: tokenAInfo.label,
-          image: tokenAInfo.image,
+          value: tokenAData.value,
+          label: tokenAData.label,
+          image: tokenAData.image,
+          address: tokenA,
         },
         tokenB: {
-          value: tokenBInfo.value,
-          label: tokenBInfo.label,
-          image: tokenBInfo.image,
+          value: tokenBData.value,
+          label: tokenBData.label,
+          image: tokenBData.image,
+          address: tokenB,
         },
         liquidityToken,
       };
     } catch (error) {
-      // console.error(`Error fetching liquidity for pool ${address}:`, error);
+      console.error(`Error fetching liquidity for pool ${address}:`, error);
       return {
         address,
-        liquidity: { totalA: '0.0', totalB: '0.0' },
-        tokenA: { value: 'N/A', label: 'N/A', image: '/tokens/Missing-Token.png' },
-        tokenB: { value: 'N/A', label: 'N/A', image: '/tokens/Missing-Token.png' },
+        liquidity: { totalA: 0.0, totalB: 0.0 },
+        tokenA: { value: '0', label: 'Unknown', image: '/tokens/Missing-Token.png', address: '' },
+        tokenB: { value: '0', label: 'Unknown', image: '/tokens/Missing-Token.png', address: '' },
       };
+    } finally {
+      console.log(`Finished fetching data for pool at address: ${address}`);
     }
   };
 
-  const handleAddLiquidityClick = (pool) => {
+  const handleAddLiquidityClick = (pool: Pool) => {
     if (!account) {
       console.error("Account is not connected!");
       return;
@@ -106,108 +150,69 @@ function Pools() {
     setAddLiquidityModalOpen(true);
   };
 
-  const handleWithdrawClick = (pool) => {
+  const handleWithdrawClick = (pool: Pool) => {
     setSelectedPool(pool);
-    setLiquidityTokenAddress(pool.liquidityToken);
     setModalOpen(true);
   };
 
-
-  const DiscoverPools = ({ pools }) => (
-    <div className="bg-[#141414] p-6 rounded-lg min-w-full h-96">
+  const DiscoverPools = ({ pools }: { pools: Pool[] }) => (
+    <div className="bg-[#141414] p-6 rounded-lg min-w-full h-auto">
       {pools.length === 0 ? (
         <p className="text-white text-center">No pools available</p>
       ) : (
-        <div className="overflow-x-auto h-screen">
-          <table className="table-auto w-full">
-            <thead>
-              <tr>
-                <th className="p-4 border-b border-gray-800 text-left font-normal text-gray-400">Liquidity</th>
-                <th className="p-4 border-b border-gray-800 text-center font-normal text-gray-400">Token A</th>
-                <th className="p-4 border-b border-gray-800 text-center font-normal text-gray-400">Token B</th>
-                <th className="p-4 border-b border-gray-800 text-right font-normal text-gray-400">#</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colSpan={4}>
-                  {pools.map((pool: { address: string; liquidity?: { totalA: string; totalB: string; }; tokenA?: { label: string; image: string; }; tokenB?: { label: string; image: string; }; }, index: React.Key | null | undefined) => (
-                    <PoolCard
-                      key={index}
-                      pool={pool}
-                      onWithdrawClick={() => handleWithdrawClick(pool)}
-                      onAddLiquidityClick={() => handleAddLiquidityClick(pool)}
-                    />
-                  ))}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {pools.map((pool, index) => (
+            <PoolCard
+              key={index}
+              pool={pool}
+              onWithdrawClick={() => handleWithdrawClick(pool)}
+              onAddLiquidityClick={() => handleAddLiquidityClick(pool)}
+            />
+          ))}
         </div>
       )}
     </div>
   );
 
-  const IncentivizedPools = ({ userOwnedPools }) => (
-    <div className="bg-[#141414] p-6 rounded-lg min-w-full h-96">
-      {pools.length === 0 ? (
+  const IncentivizedPools = ({ userOwnedPools }: { userOwnedPools: Pool[] }) => (
+    <div className="bg-[#141414] p-6 rounded-lg min-w-full h-auto">
+      {userOwnedPools.length === 0 ? (
         <p className="text-white text-center">No pools available</p>
       ) : (
-        <div className="overflow-x-auto h-screen">
-          <table className="table-auto w-full">
-            <thead>
-              <tr>
-                <th className="p-4 border-b border-gray-800 text-left font-normal text-gray-400">Liquidity</th>
-                <th className="p-4 border-b border-gray-800 text-center font-normal text-gray-400">Token A</th>
-                <th className="p-4 border-b border-gray-800 text-center font-normal text-gray-400">Token B</th>
-                <th className="p-4 border-b border-gray-800 text-right font-normal text-gray-400">#</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colSpan={4}>
-                  {userOwnedPools.map((pool: { address: string; liquidity?: { totalA: string; totalB: string; }; tokenA?: { label: string; image: string; }; tokenB?: { label: string; image: string; }; }, index: React.Key | null | undefined) => (
-                    <PoolCard
-                      key={index}
-                      pool={pool}
-                      onWithdrawClick={() => handleWithdrawClick(pool)}
-                      onAddLiquidityClick={() => handleAddLiquidityClick(pool)}
-                    />
-                  ))}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {userOwnedPools.map((pool, index) => (
+            <PoolCard
+              key={index}
+              pool={pool}
+              onWithdrawClick={() => handleWithdrawClick(pool)}
+              onAddLiquidityClick={() => handleAddLiquidityClick(pool)}
+            />
+          ))}
         </div>
       )}
     </div>
   );
-
 
   const drawerList = [
-    {
-      label: "Discover",
-      content: <DiscoverPools pools={pools} />, // Add token holders data here
-    },
-    {
-      label: "Incentivized",
-      content: <IncentivizedPools userOwnedPools={userOwnedPools} />, // Add staking tokens data here
-    },
+    { label: "Discover", content: <DiscoverPools pools={pools} /> },
+    { label: "Incentivized", content: <IncentivizedPools userOwnedPools={userOwnedPools} /> },
   ];
 
   return (
-    <section className="min-h-screen animation-bounce bg-pools bg-no-repeat bg-contain py-12 pt-36">
+    <section className="min-h-screen bg-pools bg-no-repeat bg-contain py-12 pt-36">
       <div className="px-40">
         <div className="flex items-center justify-between py-6">
           <h2 className="text-4xl font-bold text-white">Overview</h2>
-          <button className='btn btn-base-200 rounded-lg' onClick={() => window.location.href = '/addpools'}><FaSwimmingPool />Add New Pool</button>
+          <button className='btn btn-base-200 rounded-lg' onClick={() => window.location.href = '/addpools'}>
+            <FaSwimmingPool /> Add New Pool
+          </button>
         </div>
         <div className="py-2">
-          {loading ?
+          {loading ? (
             <div className="flex items-center justify-center">
               <span className="loading loading-bars loading-lg"></span>
             </div>
-            :
+          ) : (
             <Drawer
               drawerItems={drawerList}
               classParent='py-2'
@@ -215,7 +220,7 @@ function Pools() {
               classActiveTab='bg-[#141414] py-2 px-4 text-lg font-medium rounded-sm text-left text-[#bdc3c7]'
               classDeactiveTab='bg-transparent border border-[#bdc3c7] text-lg font-medium py-2 px-4 rounded-sm text-left text-white'
             />
-          }
+          )}
         </div>
       </div>
 
@@ -238,7 +243,6 @@ function Pools() {
         account={account || ''}
         poolAddress={selectedPool?.address || ''}
       />
-
     </section>
   );
 }
